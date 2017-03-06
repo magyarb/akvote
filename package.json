@@ -1,0 +1,33 @@
+{
+  "name": "pgtest",
+  "version": "1.0.0",
+  "description": "postgres conntest",
+  "main": "index.js",
+  "scripts": {
+    "build all": "npm install && cd public && npm install && echo build done",
+    "build backend": "npm install && echo build done",
+    "build frontend": "cd public && npm install && echo build done",
+    "run": "node index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "*",
+    "body-parser": "*",
+    "connect-flash": "*",
+    "cookie-parser": "^1.4.1",
+    "express": "*",
+    "express-handlebars": "*",
+    "express-messages": "*",
+    "express-session": "*",
+    "express-validator": "*",
+    "passport": "*",
+    "passport-http": "*",
+    "passport-local": "*",
+    "passport-facebook": "*",
+    "passport-instagram": "*",
+    "instagram-node": "*",
+    "fbgraph": "*",
+    "pg": "*"
+  },
+  "author": "",
+  "license": "ISC"
+}

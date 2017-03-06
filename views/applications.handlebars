@@ -1,0 +1,32 @@
+{{#if isak}}
+    <form method="get" action="/applications/uploader">
+        <button class="btn btn-primary">Új pályázat leadása</button>
+    </form>
+{{/if}}
+<br>
+<h3>Pályázatok:</h3>
+<style>
+    td {vertical-align: middle !important;}
+    tr { height: 90px;}
+</style>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Kép</th>
+            <th>Név</th>
+            <th>Pályázat link</th>
+            <th>Szavazás</th>
+        </tr>
+    {{#each arr}}
+        <tr>
+            <td><img src="{{picurl}}"></td>
+            <td>{{name}}</td>
+            <td ><a href="uploads/{{applicationpdf}}">{{applicationpdf}}</a></td>
+            <td ><form method="get" action="/vote/{{fbid}}">
+                <button class="btn btn-primary">Szavazok rá!</button>
+            </form></td>
+        </tr>
+    {{/each}}
+</table>
+</div>

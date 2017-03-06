@@ -1,0 +1,73 @@
+
+<h3>Üdv a választási rendszerben, {{username}}!</h3>
+<br><br>
+Szavazási időszak kezdete: {{start}}
+<br><br>
+Szavazási időszak vége: {{end}}
+<br><br>
+<div class="container">
+    <div class="row">
+
+        {{#if isak}}
+            <div class="col-xs-6 text-center">
+                <div class="service-box">
+                    <i class="fa fa-4x fa-check" style="color: green; "></i>
+                    <h3>Az AK tagja vagy.</h3>
+                    <br>
+                    {{#if votedfor}}
+                        Már szavaztál {{votedfor}}-ra.
+                        <br><br>
+                    {{/if}}
+                    <br>
+                    <form method="get" action="/applications">
+                        <button class="btn btn-primary">Pályázatok és szavazás</button>
+                    </form>
+                    <br>
+                    <form method="get" action="/results">
+                        <button class="btn btn-danger">Eredmények</button>
+                    </form>
+                </div>
+            </div>
+        {{else}}
+            <div class="col-xs-6 text-center">
+                <div class="service-box">
+                    <i class="fa fa-4x  fa-times" style="color: red; "></i>
+                    <h3>Jelenleg nem vagy az AK tagja.</h3>
+                    <form method="get" action="/users/getvoters">
+                        <button class="btn btn-default">Taglista frissítése</button>
+                    </form>
+                </div>
+            </div>
+
+        {{/if}}
+
+        {{#if ishok}}
+            <div class="col-xs-6 text-center">
+                <div class="service-box">
+                    <i class="fa fa-4x fa-check" style="color: green; "></i>
+                    <h3>A HÖK elnökség tagja vagy.</h3>
+                    <br>
+                    <form method="get" action="/applications">
+                        <button class="btn btn-primary">Pályázatok és szavazás</button>
+                    </form>
+                    </form>
+                    <br>
+                    <form method="get" action="/results">
+                        <button class="btn btn-danger">Eredmények</button>
+                    </form>
+                    <br>
+                </div>
+            </div>
+        {{else}}
+            <div class="col-xs-6 text-center">
+                <div class="service-box">
+                    <i class="fa fa-4x  fa-times" style="color: red; "></i>
+                    <h3>Nem vagy a HÖK elnökség tagja.</h3>
+                </div>
+            </div>
+
+        {{/if}}
+
+
+    </div>
+</div>
