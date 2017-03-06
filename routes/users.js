@@ -121,8 +121,8 @@ router.get('/lofasz', function (req, res) {
 });
 
 passport.use(new FacebookStrategy({
-        clientID: "417097311706806",
-        clientSecret: "47ebbb396e9ebf2ec0793f1256a23a17",
+        clientID: env.fbclient,
+        clientSecret: env.fbsecret,
         callbackURL: url + "/users/auth/facebook/callback",
         profileFields: ['name', 'emails', 'gender', 'profileUrl', 'picture']
     },

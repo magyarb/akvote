@@ -2,13 +2,14 @@
  * Created by balazs on 3/1/2017.
  */
 var express = require('express');
+var env = require("../env").env;
 var router = express.Router();
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var graph = require('fbgraph');
 var db = require('../postgres');
 
-var url = "http://localhost:3000";
+var url = env.addr;
 
 
 router.get('/', function (req, res) {
