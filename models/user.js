@@ -50,6 +50,7 @@ User.findOne = function (fbid, callback) {
             isNotAvailable = false;
             //email = email;
             console.log(fbid + ' is available');
+            return callback(false, isNotAvailable, null);
         }
 
         return callback(false, isNotAvailable, this);

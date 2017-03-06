@@ -26,7 +26,8 @@
     "passport-instagram": "*",
     "instagram-node": "*",
     "fbgraph": "*",
-    "pg": "*"
+    "pg": "*",
+    "express-fileupload": "*"
   },
   "author": "",
   "license": "ISC"

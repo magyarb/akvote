@@ -130,17 +130,17 @@ passport.use(new FacebookStrategy({
 
         process.nextTick(function () {
             //console.log(profile);
-            User.findOne(profile.id, function (err, asd, user) {
+            User.findOne(profile.id, function (err, asd, founduser) {
                 if (err)
                     return done(err);
 
-                if (user.fbid > 0) {
-                    console.log("findone found user:" + user.fbid);
-                    db.runq("UPDATE users SET fbtoken = $1, name = $2, email = $3, picurl = $4 WHERE fbid = $5", [accessToken, profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value, profile.photos[0].value, user.fbid], function (result) {
+                if (founduser != null) {
+                    console.log("findone found user:" + founduser.fbid);
+                    db.runq("UPDATE users SET fbtoken = $1, name = $2, email = $3, picurl = $4 WHERE fbid = $5", [accessToken, profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value, profile.photos[0].value, founduser.fbid], function (result) {
                         //void
                     });
 
-                    return done(null, user);
+                    return done(null, founduser);
                 }
                 else {
                     var newUser = new User();
