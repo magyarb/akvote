@@ -12,7 +12,7 @@ var db = require('../postgres');
 var url = env.addr;
 
 
-router.get('/', function (req, res) {
+router.get('/', ensureAuthenticated, function (req, res) {
     console.log('GET applications')
     var appliarray = [];
     db.runq("SELECT * FROM users WHERE applicationpdf IS NOT NULL ORDER BY name", null, function (result) {
@@ -36,13 +36,13 @@ router.get('/', function (req, res) {
     });
 });
 
-router.get('/uploader', function (req, res) {
+router.get('/uploader', ensureAuthenticated, function (req, res) {
 
     res.render('upload');
 
 });
 
-router.post('/upload', function (req, res) {
+router.post('/upload', ensureAuthenticated, function (req, res) {
     try {
         // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
         var sampleFile = req.files.sampleFile;
@@ -72,5 +72,13 @@ router.post('/upload', function (req, res) {
     }
 });
 
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        req.flash('error_msg', 'Be kéne jelentkezni.');
+        res.redirect('/users/login');
+    }
+}
 
 module.exports = router;

@@ -47,7 +47,7 @@ router.get('/login', function (req, res) {
     res.render('login');
 });
 
-router.get('/getvoters', function (req, res) {
+router.get('/getvoters', ensureAuthenticated, function (req, res) {
 
     graph.setAccessToken(req.user.fbtoken);
     console.log(req.user.fbtoken);
@@ -84,7 +84,7 @@ router.get('/getvoters', function (req, res) {
     }
 });
 
-router.get('/init', function (req, res) {
+router.get('/init', ensureAuthenticated, function (req, res) {
     if(req.user != undefined && req.user.fbid == 1825485949) {
         graph.setAccessToken(req.user.fbtoken);
         console.log(req.user.fbtoken);

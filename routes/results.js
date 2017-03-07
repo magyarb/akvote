@@ -7,6 +7,7 @@ var router = express.Router();
 var db = require("../postgres");
 
 router.get('/', ifEndedVoting, function (req, res) {
+    try{
     db.runq("BEGIN;SELECT show_results('cur');FETCH ALL IN \"cur\"; COMMIT;", null, function (result) {
         var arr = result.rows.slice(1);
         res.render('results',
@@ -16,6 +17,12 @@ router.get('/', ifEndedVoting, function (req, res) {
                 ishok: req.user.isHOK
             });
     });
+    }
+    catch (e)
+    {
+        req.flash('error_msg', 'Be kéne jelentkezni.');
+        res.redirect('/users/login');
+    }
 });
 
 function ifEndedVoting(req, res, next) {

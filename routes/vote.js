@@ -12,16 +12,23 @@ var db = require("../postgres");
 var url = "http://localhost:3000";
 
 router.get('/:name', ifVoting, function(req, res){
-    db.runq("UPDATE users SET votedfor = $1 WHERE fbid = $2", [req.params.name, req.user.fbid], function (result) {
-        console.log(req.user.fbid + ' VOTED FOR ' + req.params.name);
-    });
+    try {
+        db.runq("UPDATE users SET votedfor = $1 WHERE fbid = $2", [req.params.name, req.user.fbid], function (result) {
+            console.log(req.user.fbid + ' VOTED FOR ' + req.params.name);
+        });
 
-    db.runq("SELECT name FROM users WHERE fbid = $1", [req.params.name], function (result) {
-        var name = result.rows[0]['name'];
-        console.log('SELECTED' + req.params.name);
-        req.flash('success_msg', 'Sikeresen szavaztál ' +name+'-ra.');
-        res.redirect('/applications');
-    });
+        db.runq("SELECT name FROM users WHERE fbid = $1", [req.params.name], function (result) {
+            var name = result.rows[0]['name'];
+            console.log('SELECTED' + req.params.name);
+            req.flash('success_msg', 'Sikeresen szavaztál ' + name + '-ra.');
+            res.redirect('/applications');
+        });
+    }
+    catch (e)
+    {
+        req.flash('error_msg', 'Be kéne jelentkezni.');
+        res.redirect('/users/login');
+    }
 });
 
 function ifVoting(req, res, next) {
