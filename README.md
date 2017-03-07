@@ -16,7 +16,8 @@ cd ..
 
 Csinálj a gyökérmappába egy env.js-t az adataiddal, egy fb appet létre kell hozni ehhez. Ez a template:
 
-~~~~ var env = {
+~~~~ 
+var env = {
     addr: "http://localhost:3000",
     port: 3000,
     votingStarts: new Date("2017.03.05. 12:30:00"),
