@@ -1,123 +1,95 @@
+ CREATE OR REPLACE FUNCTION show_results2(ref refcursor) RETURNS refcursor AS $$
 
-CREATE
-OR REPLACE FUNCTION show_results (REF refcursor) RETURNS refcursor AS $$
-BEGIN
-	OPEN REF FOR (
-		SELECT
-			nev,
-			aksz,
-			aksz * 10000 / (
-				SELECT
-					COUNT (votedfor) AS voterc
-				FROM
-					users
-				WHERE
-					isak = TRUE
-				AND ishok IS NOT TRUE
-			) AS akprec,
-			hoksz,
-			hoksz * 10000 / (
-				SELECT
-					COUNT (votedfor) AS voterc
-				FROM
-					users
-				WHERE
-					ishok = TRUE
-			) AS hokprec,
-			aksz + hoksz AS sumsz,
-			(
-				aksz * 10000 / (
-					SELECT
-						COUNT (votedfor) AS voterc
-					FROM
-						users
-					WHERE
-						isak = TRUE
-					AND ishok IS NOT TRUE
-				) + hoksz * 10000 / (
-					SELECT
-						COUNT (votedfor) AS voterc
-					FROM
-						users
-					WHERE
-						ishok = TRUE
-				)
-			) / 2 AS sumprec
-		FROM
-			(
-				SELECT
-					ak.nev,
-					ak.szavazatok AS aksz,
-					CASE
-				WHEN hok.szavazatok IS NULL THEN
+    BEGIN
+      OPEN ref FOR (
+
+SELECT "name", aksz, hoksz, akprec, hokprec, (akprec+hokprec)/2 as sumprec FROM
+
+(
+SELECT "name", aksz, hoksz, 
+
+CASE
+				WHEN hokprec IS NULL THEN
 					0
 				ELSE
-					hok.szavazatok
-				END AS hoksz
-				FROM
-					(
-						SELECT
-							nevek."name" AS nev,
-							COUNT (szavazok.votedfor) AS szavazatok
-						FROM
-							users AS szavazok
-						INNER JOIN users AS nevek ON szavazok.votedfor = nevek.fbid
-						WHERE
-							szavazok.isak = TRUE
-						AND szavazok.ishok IS NOT TRUE
-						GROUP BY
-							nevek."name"
-					) AS ak
-				LEFT JOIN (
-					SELECT
-						nevek."name" AS nev,
-						COUNT (szavazok.votedfor) AS szavazatok
-					FROM
-						users AS szavazok
-					INNER JOIN users AS nevek ON szavazok.votedfor = nevek.fbid
-					WHERE
-						szavazok.ishok = TRUE
-					GROUP BY
-						nevek."name"
-				) AS hok ON ak.nev = hok.nev
-				UNION
-					SELECT
-						hok.nev,
-						CASE
-					WHEN ak.szavazatok IS NULL THEN
-						0
-					ELSE
-						ak.szavazatok
-					END,
-					hok.szavazatok
-				FROM
-					(
-						SELECT
-							nevek."name" AS nev,
-							COUNT (szavazok.votedfor) AS szavazatok
-						FROM
-							users AS szavazok
-						INNER JOIN users AS nevek ON szavazok.votedfor = nevek.fbid
-						WHERE
-							szavazok.isak = TRUE
-						AND szavazok.ishok IS NOT TRUE
-						GROUP BY
-							nevek."name"
-					) AS ak
-				RIGHT JOIN (
-					SELECT
-						nevek."name" AS nev,
-						COUNT (szavazok.votedfor) AS szavazatok
-					FROM
-						users AS szavazok
-					INNER JOIN users AS nevek ON szavazok.votedfor = nevek.fbid
-					WHERE
-						szavazok.ishok = TRUE
-					GROUP BY
-						nevek."name"
-				) AS hok ON ak.nev = hok.nev
-			) AS tabla
-		ORDER BY
-			sumprec DESC
-	) ; RETURN REF ;
-END ; $$ LANGUAGE plpgsql;
+					hokprec
+				END AS hokprec,
+CASE
+				WHEN akprec IS NULL THEN
+					0
+				ELSE
+					akprec
+				END AS akprec
+ FROM
+
+(
+
+SELECT 
+CASE
+				WHEN hok."name" IS NULL THEN
+					ak."name"
+				ELSE
+					hok."name"
+				END AS "name",
+CASE
+WHEN ak.aksz IS NULL THEN
+					0
+				ELSE
+					ak.aksz
+				END AS aksz,
+CASE
+WHEN hok.hoksz IS NULL THEN
+					0
+				ELSE
+					hok.hoksz
+				END AS hoksz,
+
+hoksz*1000000/(SELECT COUNT(ishok)*100 FROM (
+SELECT DISTINCT ON (szavazo."name")
+szavazo.ishok
+FROM	users as jelolt
+INNER JOIN votes ON votes.votedfor = jelolt.fbid
+INNER JOIN users as szavazo ON votes."user" = szavazo.fbid) as foo) as hokprec,
+
+aksz*1000000/(SELECT COUNT(isak)*100 FROM (
+SELECT DISTINCT ON (szavazo."name")
+szavazo.isak
+FROM	users as jelolt
+INNER JOIN votes ON votes.votedfor = jelolt.fbid
+INNER JOIN users as szavazo ON votes."user" = szavazo.fbid) as foo) as akprec
+
+FROM
+--AK szavazatok
+(
+SELECT
+	jelolt."name" as "name",
+	COUNT (szavazo."name") AS aksz
+FROM	users as jelolt
+INNER JOIN votes ON votes.votedfor = jelolt.fbid
+INNER JOIN users as szavazo ON votes."user" = szavazo.fbid
+WHERE
+szavazo.isak IS TRUE
+AND szavazo.ishok IS NOT TRUE
+GROUP BY jelolt."name"
+ORDER BY	aksz DESC 
+) as ak
+FULL JOIN 
+
+--HOK szavazatok
+(SELECT
+	jelolt."name" as "name",
+	COUNT (szavazo."name") AS hoksz
+FROM	users as jelolt
+INNER JOIN votes ON votes.votedfor = jelolt.fbid
+INNER JOIN users as szavazo ON votes."user" = szavazo.fbid
+WHERE
+szavazo.ishok IS TRUE
+GROUP BY jelolt."name"
+ORDER BY	hoksz DESC ) as hok
+
+ON ak."name" = hok."name") as foo )
+ as foo ORDER BY sumprec DESC
+);
+      RETURN ref;
+    END;
+    $$ LANGUAGE plpgsql;

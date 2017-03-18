@@ -15,15 +15,22 @@ var url = env.addr;
 router.get('/', ensureAuthenticated, function (req, res) {
     console.log('GET applications')
     var appliarray = [];
-    db.runq("SELECT * FROM users WHERE applicationpdf IS NOT NULL ORDER BY name", null, function (result) {
-        result.rows.forEach(function (row) {
+    db.runq("SELECT * FROM show_myvotes($1)", [req.user.fbid], function (result) {
+        var arr = result.rows;
+        arr.forEach(function (row) {
             var appli = {};
             //console.log(result.rows);
+
             appli.picurl = row['picurl'];
             appli.name = row['name'];
             appli.fbid = row['fbid'];
             appli.name = row['name'];
             appli.applicationpdf = row['applicationpdf'];
+            if(row['user'] == null) {
+                appli.myvote = false;
+            }
+            else
+                appli.myvote = true;
             console.log("Got: " + appli.name);
             appliarray.push(appli);
         });
@@ -34,9 +41,11 @@ router.get('/', ensureAuthenticated, function (req, res) {
                 ishok: req.user.isHOK
             });
     });
+
+
 });
 
-router.get('/uploader', ensureAuthenticated, function (req, res) {
+router.get('/uploader', ensureAuthenticated, ifBeforeVoting, function (req, res) {
 
     res.render('upload');
 
@@ -78,6 +87,15 @@ function ensureAuthenticated(req, res, next) {
     } else {
         req.flash('error_msg', 'Be kéne jelentkezni.');
         res.redirect('/users/login');
+    }
+}
+function ifBeforeVoting(req, res, next) {
+    var now = new Date();
+    if (env.votingStarts > now) {
+        return next();
+    } else {
+        req.flash('error_msg', 'Már nem tudsz leadni pályázatot.');
+        res.redirect('/applications');
     }
 }
 

@@ -19,13 +19,25 @@
             <th>Szavazás</th>
         </tr>
     {{#each arr}}
-        <tr>
+        {{#if myvote}}
+        <tr bgcolor="#dbffe1">
+        {{else}}
+            <tr>
+        {{/if}}
             <td><img src="{{picurl}}"></td>
             <td>{{name}}</td>
             <td ><a href="uploads/{{applicationpdf}}">{{applicationpdf}}</a></td>
-            <td ><form method="get" action="/vote/{{fbid}}">
-                <button class="btn btn-primary">Szavazok rá!</button>
-            </form></td>
+        {{#if myvote}}
+                <td ><form method="get" action="/vote/remove/{{fbid}}">
+                    <button class="btn btn-danger">Mégsem szavazok rá!</button>
+                </form></td>
+
+        {{else}}
+                <td ><form method="get" action="/vote/{{fbid}}">
+                    <button class="btn btn-primary">Szavazok rá!</button>
+                </form></td>
+        {{/if}}
+
         </tr>
     {{/each}}
 </table>

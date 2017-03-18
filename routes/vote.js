@@ -11,10 +11,11 @@ var db = require("../postgres");
 
 var url = "http://localhost:3000";
 
-router.get('/:name', ifVoting, function(req, res){
+router.get('/:name', ifVoting, function (req, res) {
     try {
-        db.runq("UPDATE users SET votedfor = $1 WHERE fbid = $2", [req.params.name, req.user.fbid], function (result) {
+        db.runq("INSERT INTO \"public\".\"votes\" (\"user\", \"votedfor\") VALUES ($2, $1)", [req.params.name, req.user.fbid], function (result) {
             console.log(req.user.fbid + ' VOTED FOR ' + req.params.name);
+
         });
 
         db.runq("SELECT name FROM users WHERE fbid = $1", [req.params.name], function (result) {
@@ -24,8 +25,23 @@ router.get('/:name', ifVoting, function(req, res){
             res.redirect('/applications');
         });
     }
-    catch (e)
-    {
+    catch (e) {
+        req.flash('error_msg', 'Be kéne jelentkezni.');
+        res.redirect('/users/login');
+    }
+});
+
+router.get('/remove/:name', ifVoting, function (req, res) {
+    try {
+        db.runq("DELETE FROM votes WHERE \"user\" = $2 AND \"votedfor\" = $1", [req.params.name, req.user.fbid], function (result) {
+            console.log(req.user.fbid + ' DEVOTED FOR ' + req.params.name);
+            req.flash('success_msg', 'Szavazat törölve.');
+            res.redirect('/applications');
+
+        });
+
+    }
+    catch (e) {
         req.flash('error_msg', 'Be kéne jelentkezni.');
         res.redirect('/users/login');
     }

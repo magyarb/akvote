@@ -136,7 +136,7 @@ passport.use(new FacebookStrategy({
 
                 if (founduser != null) {
                     console.log("findone found user:" + founduser.fbid);
-                    db.runq("UPDATE users SET fbtoken = $1, name = $2, email = $3, picurl = $4 WHERE fbid = $5", [accessToken, profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value, profile.photos[0].value, founduser.fbid], function (result) {
+                    db.runq("UPDATE users SET fbtoken = $1, name = $2, email = $3, picurl = $4 WHERE fbid = $5", [accessToken, profile.name.familyName + ' ' + profile.name.givenName, "", profile.photos[0].value, founduser.fbid], function (result) {
                         //void
                     });
 

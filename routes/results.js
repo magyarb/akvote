@@ -8,7 +8,7 @@ var db = require("../postgres");
 
 router.get('/', ifEndedVoting, function (req, res) {
     try{
-    db.runq("BEGIN;SELECT show_results('cur');FETCH ALL IN \"cur\"; COMMIT;", null, function (result) {
+    db.runq("BEGIN;SELECT show_results2('cur');FETCH ALL IN \"cur\"; COMMIT;", null, function (result) {
         var arr = result.rows.slice(1);
         res.render('results',
             {
