@@ -147,8 +147,19 @@ passport.use(new FacebookStrategy({
                     newUser.fbid = profile.id;
                     newUser.fbtoken = accessToken;
                     newUser.name = profile.name.familyName + ' ' + profile.name.givenName;
-                    newUser.email = profile.emails[0].value;
-                    newUser.picurl = profile.photos[0].value;
+                    try {
+                        newUser.email = profile.emails[0].value;
+                    }
+                    catch (e){
+                        newUser.email = "";
+                    }
+                    try {
+                        newUser.picurl = profile.photos[0].value;
+                    }
+                    catch (e)
+                    {
+                        newUser.picurl = "";
+                    }
 
                     newUser.save(function (err) {
                         if (err)
