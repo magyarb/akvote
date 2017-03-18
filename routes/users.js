@@ -167,7 +167,7 @@ passport.use(new FacebookStrategy({
                         return done(null, newUser);
                     });
                     //console.log(profile);
-                    console.log("NEWUSER:  " + profile.emails[0].value);
+                    console.log("NEWUSER:  " + profile.id);
                 }
             });
         });
