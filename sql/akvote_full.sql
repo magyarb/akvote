@@ -85,7 +85,7 @@ CREATE UNIQUE INDEX "egyszer" ON "public"."votes" USING btree ("votedfor", "user
     BEGIN
       OPEN ref FOR (
 
-SELECT "name", aksz, hoksz, akprec, hokprec, (akprec+hokprec)/2 as sumprec FROM
+SELECT "name", aksz, hoksz, akprec, hokprec, aksz+hoksz as sumsz, (akprec+hokprec)/2 as sumprec FROM
 
 (
 SELECT "name", aksz, hoksz, 
