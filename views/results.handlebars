@@ -1,4 +1,4 @@
-<h3>Eredmények:</h3>
+<h3>Eredmények</h3>
 <style>
     td {vertical-align: middle !important;}
     tr { height: 90px;}
@@ -8,23 +8,14 @@
         <thead>
         <tr>
             <th>Név</th>
-            <th>AK szavazatok</th>
-            <th>AK %</th>
-            <th>HÖK szavazatok</th>
-            <th>HÖK %</th>
-            <th>Össz szavazatok</th>
-            <th>Össz %</th>
+            <th>Szavazatok</th>
+            <th>Százalék</th>
         </tr>
     {{#each arr}}
         <tr>
             <td>{{name}}</td>
             <td >{{aksz}}</td>
             <td >{{szazalek akprec}}</td>
-            <td >{{hoksz}}</td>
-            <td >{{szazalek hokprec}}</td>
-            <td >{{sumsz}}</td>
-            <td >{{szazalek sumprec}}</td>
-
         </tr>
     {{/each}}
 </table>

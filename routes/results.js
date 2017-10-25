@@ -9,13 +9,19 @@ var db = require("../postgres");
 router.get('/', ifEndedVoting, function (req, res) {
     try{
     db.runq("BEGIN;SELECT show_results2('cur');FETCH ALL IN \"cur\"; COMMIT;", null, function (result) {
-        var arr = result.rows.slice(1);
-        res.render('results',
-            {
-                arr: arr,
-                isak: req.user.isAK,
-                ishok: req.user.isHOK
-            });
+        try {
+            var arr = result[2].rows;
+            res.render('results',
+                {
+                    arr: arr,
+                    isak: req.user.isAK,
+                    ishok: req.user.isHOK
+                });
+        }
+        catch(e) {
+            req.flash('error_msg', 'Hiba történt az eredmények listázása közben.');
+            res.redirect('/users/details');
+        }
     });
     }
     catch (e)
