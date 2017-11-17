@@ -14,11 +14,11 @@ var User = require('../models/user');
 router.get('/details', ensureAuthenticated, function (req, res) {
     db.runq("SELECT name FROM users WHERE fbid = (SELECT votedfor FROM users WHERE fbid = $1)", [req.user.fbid], function (result) {
         var votedfor = null;
-        try{
+        try {
             votedfor = result.rows[0]['name'];
         }
-        catch (e)
-        {}
+        catch (e) {
+        }
         res.render('details',
             {
                 username: req.user.name,
@@ -31,7 +31,6 @@ router.get('/details', ensureAuthenticated, function (req, res) {
     });
 
 
-
 });
 
 function ensureAuthenticated(req, res, next) {
@@ -42,6 +41,7 @@ function ensureAuthenticated(req, res, next) {
         res.redirect('/users/login');
     }
 }
+
 // Login
 router.get('/login', function (req, res) {
     res.render('login');
@@ -55,37 +55,43 @@ router.get('/getvoters', ensureAuthenticated, function (req, res) {
     graph.get("459722457389411/members", doSomething);
 
     function doSomething(error, response) {
-        response.data.forEach(function (element, index, array) {
-            //console.log(element.id);
-            //console.log(element.name);
-            /*pool.query('INSERT INTO users(fbid, isak, name) VALUES($1, $2, $3)', [element.id, true, element.name], function (err, result) {
-             if(err){
-             console.log(err);
-             return console.error('v');
-             done(err);
-             }
-             //console.log(result.rows);
-             console.log("SAVED: " + element.name);
-             });*/
-            db.runq("UPDATE users SET isak = $2 WHERE fbid = $1",  [element.id, true], function (result) {
-                if (result.rowCount > 0) {
-                    console.log("SAVED: " + element.name);
-                }
+        try {
+            response.data.forEach(function (element, index, array) {
+                //console.log(element.id);
+                //console.log(element.name);
+                /*pool.query('INSERT INTO users(fbid, isak, name) VALUES($1, $2, $3)', [element.id, true, element.name], function (err, result) {
+                 if(err){
+                 console.log(err);
+                 return console.error('v');
+                 done(err);
+                 }
+                 //console.log(result.rows);
+                 console.log("SAVED: " + element.name);
+                 });*/
+                db.runq("UPDATE users SET isak = $2 WHERE fbid = $1", [element.id, true], function (result) {
+                    if (result.rowCount > 0) {
+                        console.log("SAVED: " + element.name);
+                    }
+                });
             });
-        });
-        if (typeof response.paging.next !== "undefined") {
-            console.log(response.paging.next);
-            graph.get(response.paging.next, doSomething);
+            if (typeof response.paging.next !== "undefined") {
+                console.log(response.paging.next);
+                graph.get(response.paging.next, doSomething);
+            }
+            else {
+                req.flash('success_msg', 'Az AK taglistája a FB csoport alapján frissítve.');
+                res.redirect('/users/details');
+            }
         }
-        else {
-            req.flash('success_msg', 'Az AK taglistája a FB csoport alapján frissítve.');
-            res.redirect('/users/details');
+
+        catch (e) {
+            console.log(e);
         }
     }
 });
 
 router.get('/init', ensureAuthenticated, function (req, res) {
-    if(req.user != undefined && req.user.fbid == 1825485949) {
+    if (req.user != undefined && req.user.fbid == 1825485949) {
         graph.setAccessToken(req.user.fbtoken);
         console.log(req.user.fbtoken);
         graph.setVersion("2.6");
@@ -109,8 +115,7 @@ router.get('/init', ensureAuthenticated, function (req, res) {
             }
         }
     }
-    else
-    {
+    else {
         req.flash('error_msg', 'Ilyet nem csinálhatsz.');
         res.redirect('/users/details');
     }
@@ -150,14 +155,13 @@ passport.use(new FacebookStrategy({
                     try {
                         newUser.email = profile.emails[0].value;
                     }
-                    catch (e){
+                    catch (e) {
                         newUser.email = "";
                     }
                     try {
                         newUser.picurl = profile.photos[0].value;
                     }
-                    catch (e)
-                    {
+                    catch (e) {
                         newUser.picurl = "";
                     }
 
