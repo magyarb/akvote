@@ -31,7 +31,7 @@ var url = env.addr;
 /**
  * ROUTES
  */
-
+//azure version
 //var routes = require('./routes/index');
 var users = require('./routes/users');
 var applications = require('./routes/applications');
