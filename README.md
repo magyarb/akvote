@@ -1,3 +1,7 @@
+This is an outdated version of the project. It was rebuilt with better technologies, but it is not open-source anymore. Contact me, if you're interested.
+
+----
+
 # akvote
 
 koordi.info
